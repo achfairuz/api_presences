@@ -1,0 +1,10 @@
+sqlalchemy
+pydantic
+pydantic-settings
+fastapi
+alembic
+uvicorn
+python-dotenv
+fastapi-sqlalchemy
+psycopg2-binary
+pydantic[email]
