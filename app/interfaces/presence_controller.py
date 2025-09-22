@@ -6,6 +6,7 @@ from app.user_cases.device_service import DeviceService
 from app.infrastructure.device_repository import DeviceRepository
 from app.infrastructure.presence_repository import PresenceRepository
 from fastapi import HTTPException
+from typing import List
 
 class PresenceController:
     def __init__(self, db: Session):
@@ -17,10 +18,10 @@ class PresenceController:
         self.presence_service = PresenceService(presence_repo, device_repo)
         self.device_service = DeviceService(device_repo)
     
-    def create_presence(self, presence_create: PresenceCreate) -> PresenceResponse:
+    def create_presence(self, payloads: List[PresenceCreate]) -> List[PresenceResponse]:
         try:
-            presence = self.presence_service.create_presence(presence_create)
-            return response.success("Presence created successfully", presence)
+            presences = self.presence_service.create_presence(payloads)
+            return response.success(presences,"Presence created successfully", )
         except HTTPException as e:
             return response.error(e.detail)
         except Exception as e:

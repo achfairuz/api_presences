@@ -12,11 +12,14 @@ class PresenceRepository:
     def get_all(self) -> List[Presence]:
         return self.db.query(Presence).all()
     
-    def create(self, payload: Presence)-> Presence:
-        self.db.add(payload)
+    def create(self, payloads: List[Presence])-> List[Presence]:
+        
+        self.db.add_all(payloads)
         self.db.commit()
-        self.db.refresh(payload)
-        return payload
+        # self.db.refresh(payloads)
+        for obj in payloads:
+            self.db.refresh(obj)
+        return payloads
 
     def update(self, presence_id: int, payload: Dict[str, Any]) -> Optional[Presence]:
         presence = self.get_id(presence_id)

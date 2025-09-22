@@ -13,20 +13,23 @@ class PresenceService:
     def get_all_presences(self) -> List[PresenceModel]:
         return self.repo.get_all()
     
-    def create_presence(self, payload: PresenceCreate) -> PresenceModel:
-        device = self.device_repo.get_id(payload.device_id)
-        
-        if not device:
-            raise HTTPException(status_code=404, detail="Device not found")
+    def create_presence(self, payloads: List[PresenceCreate]) -> List[PresenceModel]:
+        new_presences = []
+        for p in payloads:
+            device = self.device_repo.get_id(p.device_id)
+            if not device:
+                raise HTTPException(status_code=404, detail=f"Device {p.device_id} not found")
             
-        new_presence = PresenceModel(
-           
-            device_id=payload.device_id,
-            duration_seconds=payload.duration_seconds,
-            timestamp=payload.timestamp,
-            status=payload.status
-        )
-        return self.repo.create(new_presence)
+            new_presences.append(
+                PresenceModel(
+                    device_id=p.device_id,
+                    duration_seconds=p.duration_seconds,
+                    timestamp=p.timestamp,
+                    status=p.status
+                )
+            )
+
+        return self.repo.create(new_presences)  # pakai repo bulk insert
     
     def update_presence(self, presence_id: int, payload: Dict[str, Any]) -> Optional[PresenceModel]:
         return self.repo.update(presence_id, payload)
